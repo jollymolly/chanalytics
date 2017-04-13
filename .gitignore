@@ -1,0 +1,9 @@
+# exclude python3 caches
+__pycache__
+
+# exclude editor's temp files
+.\#*
+\#*\#
+
+# exclude migrations
+migrations/

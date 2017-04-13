@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script>
+          var options = {
+              {% for opt in opts %}
+              {{ opt|safe }}
+              {% endfor %}
+          };
+
+          function setUpSearchParams() {
+
+              if(JSON.stringify(options) === JSON.stringify({})) {
+                  selects = document.getElementsByClassName(
+                      "search-option");
+                  for(var i = 0; i < selects.length; i++)
+                      selects[i].options.selectedIndex = -1;
+                  return;
+              }
+                  
+              var htmlControls = {};
+              for(var p in options) {
+                  
+                  htmlControls[p] = document.getElementById(p);
+
+                  if(!htmlControls[p]) continue;
+
+                  var i;
+                  
+                  for(i = 0; i < htmlControls[p].options.length; i++) {
+
+                      if(htmlControls[p].options[i].value == options[p]) {
+                          htmlControls[p].options.selectedIndex = i;
+                          break;
+                       }
+                  }
+
+                  if( i == htmlControls[p].options.length )
+                      htmlControls[p].options.selectedIndex = -1;
+              }                   
+          }
+        </script>
+    </head>
+    <body style="margin: 2em 3em" onLoad="setUpSearchParams()">
+      
+        <div class="container-fluid">
+          <div class="row">
+            <h2 class="text-center">Search options for channel selection</h2>
+            <div class="col-sm-8 col-sm-offset-2">
+                 <form class="form-inline" role="form" method="get"
+                       action="{% url 'chanalytics:search' %}">
+                     {% csrf_token %}
+                    <div class="form-group col-sm-2">
+                      <select name="country_code" id="country_code"
+                              class="form-control search-option">
+                          {% for cc in select_country_code %}
+                          <option value="{{cc}}">{{cc}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                      <select name="age_group" id="age_group"
+                              class="form-control search-option">
+                          {% for ag in select_age_group %}
+                          <option value="{{ag}}">{{ag}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                      <select name="gender" id="gender"
+                              class="form-control search-option">
+                          {% for g in select_gender %}
+                          <option value="{{g}}">{{g}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                      <select name="device_type" id="device_type"
+                              class="form-control search-option">
+                          {% for dt in select_device_type %}
+                          <option value="{{dt}}">{{dt}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                      <select name="os" id="os"
+                              class="form-control search-option">
+                          {% for osname in select_os %}
+                          <option value="{{osname}}">{{osname}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit"
+                            class="btn btn-primary col-sm-2">
+                        Search
+                    </button>
+                 </form>
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+
+        {% if message %}
+        <h2 class="text-center">{{ message }}</h2>
+        {% endif %}
+
+        {% if channels %}
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Rank</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch in channels %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{ch.youtube.name}}</td>
+                        <td>{{ch.youtube.title}}</td>
+                        <td>{{ch.weight}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </div>
+        {% endif %}
+
+    </body>
+</html>
