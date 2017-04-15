@@ -1,3 +1,5 @@
+Django app.
+
 Youtube channels sorting by a target viewers base.
 
 Model consits of an youtube channel itself with various linked analytical data
